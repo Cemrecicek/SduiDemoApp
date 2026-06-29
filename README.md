@@ -1,97 +1,123 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Server-Driven UI (SDUI) Demo Application
 
-# Getting Started
+This repository showcases a React Native application built around the concept of Server-Driven UI. Instead of shipping a new mobile app build every time the layout changes, the app receives a dynamic JSON schema from a server and renders the interface at runtime.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Core Concept & Architecture
 
-## Step 1: Start Metro
+In this app, predefined UI components are compiled into the client application, while the server controls:
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- which components should be shown,
+- the order in which they appear, and
+- the data passed into each component.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+This approach enables real-time personalization and layout changes without requiring app store updates. The client remains lightweight while the backend fully manages the UI experience.
 
-```sh
-# Using npm
-npm start
+## Tech Stack & Details
 
-# OR using Yarn
-yarn start
+- React Native
+- TypeScript
+- StyleSheet-based UI implementation with clean component styling
+- No standard inline styling used in the project structure
+
+## Dynamic Server Schema (db.json)
+
+The server can return a JSON object containing different user-page layouts. The following example demonstrates a premium experience and a standard experience:
+
+```json
+{
+  "premium_user_page": [
+    {
+      "type": "header_view",
+      "props": {
+        "title": "👑 Welcome to Premium World!",
+        "backgroundColor": "#d4af37"
+      }
+    },
+    {
+      "type": "banner_view",
+      "props": {
+        "imageUrl": "https://picsum.photos/id/26/600/400",
+        "text": "Exclusive ad-free experience and VIP 50% discount items listed below."
+      }
+    },
+    {
+      "type": "product_card_view",
+      "props": {
+        "productName": "Premium Headphones (VIP)",
+        "price": "$150"
+      }
+    }
+  ],
+  "standart_user_page": [
+    {
+      "type": "header_view",
+      "props": {
+        "title": "Standard Store",
+        "backgroundColor": "#34495e"
+      }
+    },
+    {
+      "type": "banner_view",
+      "props": {
+        "imageUrl": "https://picsum.photos/id/10/600/400",
+        "text": "Upgrade to Premium to double your rewards and unlock active deals!"
+      }
+    },
+    {
+      "type": "product_card_view",
+      "props": {
+        "productName": "Standard Headphones",
+        "price": "$300"
+      }
+    }
+  ]
+}
 ```
 
-## Step 2: Build and run your app
+## Getting Started (Installation & Usage)
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+### Prerequisites
 
-### Android
+Make sure the following tools are installed:
 
-```sh
-# Using npm
-npm run android
+- Node.js
+- JDK
+- Android Studio (for Android)
+- Xcode (for iOS)
 
-# OR using Yarn
-yarn android
+### Installation
+
+```bash
+npm install
 ```
 
-### iOS
+### Run Metro
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+```bash
+npx react-native start
 ```
 
-Then, and every time you update your native dependencies, run:
+### Optional Local Server Configuration
 
-```sh
-bundle exec pod install
+If you want to simulate the server response locally, you can use JSON Server:
+
+```bash
+npx json-server db.json --port 3000
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+### Run on Android
 
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+```bash
+adb reverse tcp:8081 tcp:8081
+npx react-native run-android
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### Run on iOS
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```bash
+npx react-native run-ios
+```
 
-## Step 3: Modify your app
+## Personalization Experiment (How to Test)
 
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+To see the SDUI behavior in action, open the file src/screens/DynamicScreen.tsx and toggle the currentUserType value between 'premium' and 'standart'. After reloading the app on your device or emulator, the entire UI should instantly change based on the selected user type.
